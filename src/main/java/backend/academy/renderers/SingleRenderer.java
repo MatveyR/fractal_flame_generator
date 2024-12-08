@@ -6,6 +6,8 @@ import backend.academy.Point;
 import backend.academy.transformations.Variation;
 import java.util.List;
 import java.util.Random;
+import static backend.academy.renderers.RendererUtils.getRandomPoint;
+import static backend.academy.renderers.RendererUtils.rotate;
 
 public class SingleRenderer implements Renderer {
     static final double X_LIMIT = 1.777;
@@ -68,18 +70,5 @@ public class SingleRenderer implements Renderer {
             );
         }
         return newPixel;
-    }
-
-    public static Point getRandomPoint() {
-        double newX = rand.nextDouble(-1 * X_LIMIT, X_LIMIT);
-        double newY = rand.nextDouble(-1 * Y_LIMIT, Y_LIMIT);
-        return new Point(newX, newY);
-    }
-
-    public static Point rotate(Point point, double theta) {
-        double rotatedX = point.x() * Math.cos(theta) - point.y() * Math.sin(theta);
-        double rotatedY = point.x() * Math.sin(theta) + point.y() * Math.cos(theta);
-
-        return new Point(rotatedX, rotatedY);
     }
 }

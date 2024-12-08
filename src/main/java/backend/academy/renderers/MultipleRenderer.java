@@ -5,13 +5,14 @@ import backend.academy.Pixel;
 import backend.academy.Point;
 import backend.academy.transformations.Variation;
 import java.util.List;
-import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+import static backend.academy.renderers.RendererUtils.getRandomPoint;
+import static backend.academy.renderers.RendererUtils.rotate;
 
 public class MultipleRenderer implements Renderer {
     private static final ReadWriteLock LOCK = new ReentrantReadWriteLock();
@@ -19,7 +20,6 @@ public class MultipleRenderer implements Renderer {
     static final double X_LIMIT = 1.777;
     static final double Y_LIMIT = 1;
     static final int MULTIPLIER = 2;
-    static final Random RANDOM = new Random();
 
     @Override
     public FractalImage render(
@@ -67,10 +67,10 @@ public class MultipleRenderer implements Renderer {
             point = variation.trans().apply(point);
 
             for (int s = 0; s < symmetry; ++s) {
-                double theta = s * Math.PI * 2 / symmetry;
-                var rotadedPoint = rotate(point, theta);
+                var rotadedPoint = rotate(point, s * Math.PI * 2 / symmetry);
 
-                int x = (int) (image.width() - (X_LIMIT - rotadedPoint.x()) / (X_LIMIT * MULTIPLIER) * image.width());
+                int x =
+                    (int) (image.width() - (X_LIMIT - rotadedPoint.x()) / (X_LIMIT * MULTIPLIER) * image.width());
                 int y =
                     (int) (image.height() - (Y_LIMIT - rotadedPoint.y()) / (Y_LIMIT * MULTIPLIER) * image.height());
 
@@ -99,18 +99,5 @@ public class MultipleRenderer implements Renderer {
                 LOCK.writeLock().unlock();
             }
         }
-    }
-
-    public static Point getRandomPoint() {
-        double newX = RANDOM.nextDouble(-1 * X_LIMIT, X_LIMIT);
-        double newY = RANDOM.nextDouble(-1 * Y_LIMIT, Y_LIMIT);
-        return new Point(newX, newY);
-    }
-
-    public static Point rotate(Point point, double theta) {
-        double rotatedX = point.x() * Math.cos(theta) - point.y() * Math.sin(theta);
-        double rotatedY = point.x() * Math.sin(theta) + point.y() * Math.cos(theta);
-
-        return new Point(rotatedX, rotatedY);
     }
 }
